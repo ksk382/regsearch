@@ -1,0 +1,122 @@
+<!-- questions/templates/questions/index.html -->
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+{% csrf_token %}
+{% load static %}
+<head>
+    <meta charset="utf-8"/>
+    <title>Reg Search Results: {{ search_terms }} </title>
+</head>
+<body>
+    <div class="container">
+        <div class="ho_center">
+                <h1 style="font-size:3vw">Reg Search </h1><br>
+            <div class="ho_center">
+
+                <form action="" method="post" id="query_form">
+                    {% csrf_token %}
+                    <input type="checkbox" id="occ" name="Agencies" value="OCC" ><label for="OCC">OCC</label>
+                    <input type="checkbox" id="frb" name="Agencies" value="FRB" ><label for="FRB">FRB</label>
+                    <input type="checkbox" id="fdic" name="Agencies" value="FDIC" ><label for="FDIC">FDIC</label>
+                    <br><br>
+                    <input id="search_terms" name = "search_terms_val" placeholder="{{ search_terms }} " type="text" ><br><br>
+                    <input id="query_submit" class="block" type="submit" value="Go">
+                 </form>
+            </div>
+        </div>
+        <br><br>
+
+        <ol>
+            {% for thing in results %}
+            <li> {{ thing.4 }} <a href= {{ thing.3 }} >  {{ thing.2 }} </a> ({{ thing.0 }}) <br> {{ thing.5 }} </li> <br>
+            {% endfor %}
+        </ol>
+
+        <div class = "log_box">
+            <div id="results_log" > </div><br>
+        </div>
+
+    </div>
+
+
+    <script>
+        var sources = "{{sources}}";
+        console.log(sources);
+        if (sources.includes("occ")) {
+            document.getElementById("occ").checked = true;
+        };
+        if (sources.includes("fdic")) {
+            document.getElementById("fdic").checked = true;
+        };
+        if (sources.includes("frb")) {
+            document.getElementById("frb").checked = true;
+        };
+
+    </script>
+
+</body>
+</html>
+
+
+<style>
+
+.ver_center {
+  padding: 100px 0;
+}
+
+.ho_center {
+  margin: auto;
+  text-align: center;
+}
+
+.log_box {
+  margin: 2vw;
+  text-align: center;
+}
+
+.container {
+    margin: 10% auto;
+}
+
+.block {
+  display: block;
+  width: 10%;
+  border-style: solid;
+  border-color: black;
+  background-color: #F08080;
+  padding: 5px 28px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  color: black;
+  margin: auto;
+}
+
+input[type=text]{
+  width: 40%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  text-align:center;
+}
+
+@media screen and (max-width: 1000px) {
+  input[type=text] {
+    width: 80%;
+  };
+}
+
+@media screen and (max-width: 1000px) {
+  .block {
+    width: 80%;
+    padding: 5% auto;
+  }
+}
+
+
+
+
+</style>

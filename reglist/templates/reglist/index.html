@@ -1,0 +1,97 @@
+<!-- questions/templates/questions/index.html -->
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+{% csrf_token %}
+{% load static %}
+<head>
+    <meta charset="utf-8"/>
+    <title>Reg Search: search banking letters</title>
+</head>
+<body>
+    <div class="container">
+        <div class="ho_center">
+                <h1 style="font-size:3vw">Reg Search</h1><br>
+            <div class="ho_center">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="checkbox" id="OCC" name="Agencies" value="OCC" checked><label for="OCC">OCC</label>
+                    <input type="checkbox" id="FRB" name="Agencies" value="FRB" checked><label for="FRB">FRB</label>
+                    <input type="checkbox" id="FDIC" name="Agencies" value="FDIC" checked><label for="FDIC">FDIC</label>
+                    <br><br>
+                    <input id="search_terms" name = "search_terms_val" placeholder="search" type="text" ><br><br>
+                    <input id="query_submit" class="block" type="submit" value="Go">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        document.querySelector('#query_submit').onclick = function(e) {
+            document.getElementById("query_form").submit();
+        });
+
+    </script>
+
+</body>
+</html>
+
+
+<style>
+
+.ver_center {
+  padding: 100px 0;
+}
+
+.ho_center {
+  margin: auto;
+  text-align: center;
+}
+
+.container {
+    margin: 10% auto;
+}
+
+.block {
+  display: block;
+  width: 10%;
+  border-style: solid;
+  border-color: black;
+  background-color: #F08080;
+  padding: 5px 28px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  color: black;
+  margin: auto;
+}
+
+input[type=text]{
+  width: 40%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  text-align:center;
+}
+
+@media screen and (max-width: 1000px) {
+  input[type=text] {
+    width: 80%;
+  };
+}
+
+@media screen and (max-width: 1000px) {
+  .block {
+    width: 80%;
+    padding: 5% auto;
+  }
+}
+
+
+
+
+</style>
