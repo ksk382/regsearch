@@ -3,13 +3,23 @@ from fdic_letters import run_fdic
 from occ_letters import run_occ
 from convert_to_text import run_text_conversion
 from distutils.dir_util import copy_tree
+import os
 
 def move_clean_files():
     cwd = os.getcwd()
-    agencies = ['occ', 'frb', 'fdic']
+    agencies = ['frb', 'fdic']
     for i in agencies:
-        src_folder = cwd + f'{i}_letters/clean/'
-        dst_folder =
+        src_folder = cwd + f'/{i}_letters/clean/'
+        dst_folder = cwd + f'../reglist/templates/{i}_letters'
+        if not os.path.exists(dst_folder):
+            os.makedirs(dst_folder)
+        copy_tree(src_folder, dst_folder)
+
+    src_folder = cwd + f'/occ_letters/clean/'
+    dst_folder = cwd + f'../reglist/static/'
+    if not os.path.exists(dst_folder):
+        os.makedirs(dst_folder)
+    copy_tree(src_folder, dst_folder)
 
     return
 
