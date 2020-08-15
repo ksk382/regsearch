@@ -14,6 +14,7 @@ def get_month_links():
     chromeOptions = webdriver.ChromeOptions()
     prefs = {'profile.managed_default_content_settings.images': 2}
     chromeOptions.add_experimental_option("prefs", prefs)
+    chromeOptions.add_argument("--headless")
     driver = webdriver.Chrome(options=chromeOptions)
 
     for i in range (1996, 2021):
