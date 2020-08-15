@@ -35,3 +35,4 @@ if __name__ == '__main__':
 
     # put the clean files into the Django templates folder
     move_clean_files()
+    print ('Main Scrape Complete')
