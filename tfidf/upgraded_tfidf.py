@@ -228,7 +228,11 @@ def run_tfidf(agency):
 
     #print (df[['txt_name', 'doc_name', 'filename']])
 
-
+    cwd = os.getcwd()
+    pickle_folder = cwd + '/../reglist/pickle/'
+    if not os.path.exists(pickle_folder):
+        print ('creating pickle folder')
+        os.makedirs(pickle_folder)
     print ('pickling...\n\n')
 
     out_p = f'../reglist/pickle/{agency}_feature_names.pickle'
@@ -271,6 +275,6 @@ def run_tfidf(agency):
 if __name__ == '__main__':
 
     agencies = ['occ', 'frb', 'fdic']
-    agencies = ['fdic']
+    agencies = ['frb']
     for agency in agencies:
         run_tfidf(agency)
