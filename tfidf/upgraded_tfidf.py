@@ -174,7 +174,6 @@ def make_tokens(doc, nlp):
 def identity_tokenizer(text):
     return text
 
-
 def run_tfidf(agency):
 
     print ('documents loading...')
@@ -186,10 +185,16 @@ def run_tfidf(agency):
 
     print ('tokenizing...')
     tokenized_corpus = []
+    error_list = []
     count = 0
     for i in doc_contents:
         count +=1
-        x = make_tokens(i, nlp)
+        try:
+            x = make_tokens(i, nlp)
+        except Exception as e:
+            print (f'failed to make tokens for {doc_contents.index(i)}')
+            error_list.append([doc_contents.index(i), str(e)])
+            x = []
         tokenized_corpus.append(x)
         if count % 100 == 0:
             print (f'{count} -- out of {len(doc_contents)}')
