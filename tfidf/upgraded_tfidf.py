@@ -28,22 +28,27 @@ def flatten(agency):
     for i in files:
         if not i.endswith('.txt'):
             continue
-        fname = txtdir + i
-        j = i.replace('.txt','')
-        doc_name = next((s for s in clean_files if j in s), None)
-        filepath = template_location + doc_name
+        else:
+            fname = txtdir + i
+            j = i.replace('.txt','')
+            doc_name = next((s for s in clean_files if j in s), None)
+            try:
+                filepath = template_location + doc_name
+            except Exception as e:
+                print (f'{j} not found')
+                continue
 
-        with open(fname, 'rb') as f:
-            contents = f.read()
-        try:
-            txt_names.append(i)
-            contents = contents.decode('utf-8')
-            doc_names.append(doc_name)
-            filenames.append(filepath)
-            doc_contents.append(contents)
-            f.close()
-        except:
-            print ('Didnt work: {0}'.format(i))
+            with open(fname, 'rb') as f:
+                contents = f.read()
+            try:
+                txt_names.append(i)
+                contents = contents.decode('utf-8')
+                doc_names.append(doc_name)
+                filenames.append(filepath)
+                doc_contents.append(contents)
+                f.close()
+            except:
+                print ('Didnt work: {0}'.format(i))
     print ('flatten function complete.')
     return doc_contents, txt_names, doc_names, filenames
 
@@ -266,5 +271,6 @@ def run_tfidf(agency):
 if __name__ == '__main__':
 
     agencies = ['occ', 'frb', 'fdic']
+    agencies = ['fdic']
     for agency in agencies:
         run_tfidf(agency)
