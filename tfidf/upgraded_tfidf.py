@@ -275,6 +275,5 @@ def run_tfidf(agency):
 if __name__ == '__main__':
 
     agencies = ['occ', 'frb', 'fdic']
-    agencies = ['frb']
     for agency in agencies:
         run_tfidf(agency)
