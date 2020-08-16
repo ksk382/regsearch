@@ -103,7 +103,6 @@ def remove_weirdos(doc_dir):
 def run_text_conversion():
     cwd = os.getcwd()
     doc_dirs = ['frb_letters/', 'fdic_letters/','occ_letters/']
-    doc_dirs = ['occ_letters/']
     total_error_list = []
     for dir in doc_dirs:
         out_dir = cwd + '/' + dir + 'text/'
