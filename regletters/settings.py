@@ -25,9 +25,10 @@ SECRET_KEY = '2u-5$lvj7-^s2#a((n^jhw01l!p+bs1ky!q_-ig^(s6n2lhi80'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ['35.169.152.209',
-#                 'www.francisbeercan.com']
-ALLOWED_HOSTS = [*]
+ALLOWED_HOSTS = ['35.169.152.209',
+                 'www.francisbeercan.com',
+                 'francisbeercan.com']
+
 
 # Application definition
 
