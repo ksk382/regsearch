@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <html>
 {% load static %}
-{% csrf_token %}
+
 <head>
     <meta charset="utf-8"/>
     <title>Reg Search: search banking letters</title>
@@ -13,7 +13,7 @@
         <div class="ho_center">
                 <h1 style="font-size:3vw">Reg Search</h1><br>
             <div class="ho_center">
-                <form action="" method="post">
+                <form action="" method="post"> {% csrf_token %}
                     <input type="checkbox" id="OCC" name="Agencies" value="OCC" checked><label for="OCC">OCC</label>
                     <input type="checkbox" id="FRB" name="Agencies" value="FRB" checked><label for="FRB">FRB</label>
                     <input type="checkbox" id="FDIC" name="Agencies" value="FDIC" checked><label for="FDIC">FDIC</label>
