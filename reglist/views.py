@@ -5,6 +5,8 @@ from django.http import FileResponse, Http404
 import os.path
 from django.shortcuts import redirect
 import urllib
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 feature_names = {}
@@ -35,23 +37,18 @@ for source in ['occ', 'fdic', 'frb']:
     with open(p_file, 'rb') as handle:
         doc_contents[source] = pickle.load(handle)
 
-# Create your views here.
+@csrf_exempt
 def index(request):
     print ('Views: inside index')
     if request.method == 'POST':
-
         form = request.POST
-
         print (form)
-
         search_terms = form['search_terms_val']
         a = form.getlist('Agencies')
         sources = ''.join(a).lower()
         x = 'query/' + sources + '/' + urllib.parse.quote(search_terms)
         print (f'url: {x}')
-
         response = redirect(x)
-
         return response
     else:
         print ('didnt post')

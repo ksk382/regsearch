@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['35.169.152.209',
                  'www.francisbeercan.com',
-                 'francisbeercan.com']
+                 'francisbeercan.com',
+                 '127.0.0.1']
 
 
 # Application definition
