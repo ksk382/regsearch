@@ -11,6 +11,8 @@ from django.template import loader
 from django.template.response import TemplateResponse, SimpleTemplateResponse
 from bs4 import BeautifulSoup
 from sys import getsizeof
+from django.core.context_processors import csrf
+
 
 
 feature_names = {}
