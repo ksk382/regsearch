@@ -54,13 +54,8 @@ def index(request):
 
         return response
     else:
-        form = request.GET
         print ('didnt post')
-
-    context = {'form': form}
-    context.update(csrf(request))
-
-    return render(request, 'reglist/index.html', context)
+    return render(request, 'reglist/index.html')
 
 def results(request, sources, search_terms):
 
