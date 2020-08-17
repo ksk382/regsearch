@@ -11,14 +11,14 @@ def move_clean_files():
     cwd = os.getcwd()
     agencies = ['frb', 'fdic']
     for i in agencies:
-        src_folder = cwd + f'/{i}_letters/clean/'
-        dst_folder = cwd + f'../reglist/templates/{i}_letters'
+        src_folder = cwd + '/{i}_letters/clean/'
+        dst_folder = cwd + '../reglist/templates/{i}_letters'
         if not os.path.exists(dst_folder):
             os.makedirs(dst_folder)
         copy_tree(src_folder, dst_folder)
 
-    src_folder = cwd + f'/occ_letters/clean/'
-    dst_folder = cwd + f'../reglist/static/'
+    src_folder = cwd + '/occ_letters/clean/'
+    dst_folder = cwd + '../reglist/static/'
     if not os.path.exists(dst_folder):
         os.makedirs(dst_folder)
     copy_tree(src_folder, dst_folder)
@@ -28,12 +28,12 @@ def move_clean_files():
 if __name__ == '__main__':
 
     # each function grabs the source documents
-    run_occ()
-    run_frb()
-    run_fdic()
+    #run_occ()
+    #run_frb()
+    #run_fdic()
 
     # convert all clean docs to text files
-    error_list = run_text_conversion()
+    #error_list = run_text_conversion()
 
     # put the clean files into the Django templates folder
     move_clean_files()
