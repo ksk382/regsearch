@@ -18,7 +18,7 @@ def move_clean_files():
         copy_tree(src_folder, dst_folder)
 
     src_folder = cwd + '/occ_letters/clean/'
-    dst_folder = cwd + '../reglist/static/'
+    dst_folder = cwd + '/../reglist/static/'
     if not os.path.exists(dst_folder):
         os.makedirs(dst_folder)
     copy_tree(src_folder, dst_folder)
