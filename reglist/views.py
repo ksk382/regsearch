@@ -139,7 +139,6 @@ def show_file(request, filename):
             print ('file not found')
             raise Http404()
 
-
     if filename.startswith('FDIC'):
         fname = 'fdic_letters/' + filename  # this also needs to include fdic/
         print (os.path.isfile(fname))
