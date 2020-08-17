@@ -1,18 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from django.http import HttpResponse
-import random
 import pickle
 from django.http import FileResponse, Http404
 import os.path
 from django.shortcuts import redirect
 import urllib
-from django.template import loader
-from django.template.response import TemplateResponse, SimpleTemplateResponse
-from bs4 import BeautifulSoup
-from sys import getsizeof
-from django.core.context_processors import csrf
-
 
 
 feature_names = {}
