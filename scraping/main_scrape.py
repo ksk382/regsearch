@@ -12,7 +12,7 @@ def move_clean_files():
     agencies = ['frb', 'fdic']
     for i in agencies:
         src_folder = cwd + f'/{i}_letters/clean/'
-        dst_folder = cwd + f'../reglist/templates/{i}_letters'
+        dst_folder = cwd + f'/../reglist/templates/{i}_letters'
         if not os.path.exists(dst_folder):
             os.makedirs(dst_folder)
         copy_tree(src_folder, dst_folder)
