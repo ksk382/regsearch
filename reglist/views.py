@@ -74,9 +74,6 @@ def results(request, sources, search_terms):
         print ('heres a post')
         return redirect(x)
 
-
-    search_terms = search_terms.lower()
-
     results_list = []
     if 'occ' in sources:
         results_list = results_list + get_results('occ', search_terms)
@@ -91,12 +88,11 @@ def results(request, sources, search_terms):
     r = r[:25]
     full_r = []
     for i in r:
-        print (i)
-        a = doc_contents[i[4]][i[1]]
-        x = a.find(search_terms)
-        d = a[max(0, (x - 100)): (x + len(search_terms) + 50)]
+        # [search term score / doc number / docname / filename / agency / feature_found]
+        a = doc_contents[i[4]][i[1]] # by agency then by document item number
+        x = a.find(i[5])
+        d = a[max(0, (x - 100)): (x + len(i[5]) + 50)]
         excerpt = d[d.find(' '):d.rfind(' ')]
-        print (excerpt)
         j = i + [excerpt]
         j[4] = i[4].upper()
         full_r.append(j)
@@ -110,18 +106,52 @@ def results(request, sources, search_terms):
     return response
 
 
+def generate_ngrams(s, n):
+    # Convert to lowercases
+    s = s.lower()
+
+    # Break sentence in the token, remove empty tokens
+    tokens = [token for token in s.split(" ") if token != ""]
+
+    # Use the zip function to generate n-grams
+    # Concatenate the tokens into ngrams and return
+    ngrams = zip(*[tokens[i:] for i in range(n)])
+    return [" ".join(ngram) for ngram in ngrams]
+
 def get_results(agency, search_terms):
     print (agency)
+    l = []
+    try_feature = search_terms
     try:
-        i = feature_names[agency].index(search_terms)
-    except:
-        return []
-    x = tfidf_matrix[agency].getcol(i)
-    x = x.todense().tolist()
-    # [score / item number / docname / filename / agency]
-    l = [[round(pair[1][0], 2), pair[0], doc_names[agency][pair[0]], filenames[agency][pair[0]], agency] for pair in zip(range(0, len(x)), x) if pair[1][0] > 0]
+        i = feature_names[agency].index(try_feature)
+        x = tfidf_matrix[agency].getcol(i)
+        x = x.todense().tolist()
+        # [search term score / item number / docname / filename / agency]
+        results_list = [
+            [round(pair[1][0], 2), pair[0], doc_names[agency][pair[0]], filenames[agency][pair[0]], agency, try_feature]
+            for pair in zip(range(0, len(x)), x) if pair[1][0] > 0]
+        l = l + results_list
+
+    except Exception as e:
+        print (f'main search term not found; {try_feature} -- {str(e)}')
+        try_features = generate_ngrams(search_terms, 1)
+        try_features = try_features + generate_ngrams(search_terms, 2)
+        try_features = try_features + generate_ngrams(search_terms, 3)
+        print (try_features)
+
+        for try_feature in try_features:
+            try:
+                i = feature_names[agency].index(try_feature)
+                x = tfidf_matrix[agency].getcol(i)
+                x = x.todense().tolist()
+                # [search term score / item number / docname / filename / agency / feature_found]
+                results_list = [[round(pair[1][0], 2), pair[0], doc_names[agency][pair[0]], filenames[agency][pair[0]], agency, try_feature] for pair in zip(range(0, len(x)), x) if pair[1][0] > 0]
+                l=l+results_list
+            except Exception as e:
+                pass
     # sort by score
-    r = sorted(l, key=lambda t: t[0] * -1)
+    r = sorted(l, key=lambda t: t[:][0] * -1)
+
     return r
 
 
