@@ -37,7 +37,6 @@ for source in ['occ', 'fdic', 'frb']:
     with open(p_file, 'rb') as handle:
         doc_contents[source] = pickle.load(handle)
 
-@csrf_exempt
 def index(request):
     print ('Views: inside index')
     if request.method == 'POST':
