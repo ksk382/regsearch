@@ -31,6 +31,15 @@ ALLOWED_HOSTS = ['35.169.152.209',
                  'francisbeercan.com',
                  '127.0.0.1']
 
+# adding HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+SECURE_HSTS_SECONDS = 500
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_SSL_REDIRECT = True
+DEBUG = False
+PREPEND_WWW = True
 
 # Application definition
 
