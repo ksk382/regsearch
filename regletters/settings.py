@@ -24,7 +24,7 @@ with open('/etc/secret_key.txt') as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['35.169.152.209',
                  'www.francisbeercan.com',
@@ -38,7 +38,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE=True
 SECURE_HSTS_SECONDS = 500
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_SSL_REDIRECT = True
-DEBUG = False
 PREPEND_WWW = True
 
 # Application definition

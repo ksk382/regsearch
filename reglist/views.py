@@ -179,3 +179,7 @@ def show_file(request, filename):
         print (os.path.isfile(fname))
         return render(None, 'reglist/letter.html', {'template_name': fname})
 
+
+
+if __name__ == "__main__":
+    print ('hello')
