@@ -6,8 +6,8 @@ import os.path
 from django.shortcuts import redirect
 import urllib
 from django.views.decorators.csrf import csrf_exempt
-
-
+import pandas as pd
+from collections import defaultdict
 
 feature_names = {}
 tfidf_matrix = {}
@@ -74,28 +74,34 @@ def results(request, sources, search_terms):
         print ('heres a post')
         return redirect(x)
 
-    results_list = []
     if 'occ' in sources:
-        results_list = results_list + get_results('occ', search_terms)
+        df1 = get_results('occ', search_terms)
     if 'fdic' in sources:
-        results_list = results_list + get_results('fdic', search_terms)
+        df2 = get_results('fdic', search_terms)
     if 'frb' in sources:
-        results_list = results_list + get_results('frb', search_terms)
+        df3 = get_results('frb', search_terms)
+    results_list = pd.concat([df1,df2,df3])
+    r = results_list.sort_values(by='doc_score', ascending=False)
 
-
-    r = sorted(results_list, key=lambda t: t[0] * -1)
-    #print (r)
-    r = r[:25]
+    page_num = 0
+    r = r[(page_num * 25):((page_num + 1) * 25)]
     full_r = []
-    for i in r:
+    for j, i in r.iterrows():
         # [search term score / doc number / docname / filename / agency / feature_found]
-        a = doc_contents[i[4]][i[1]] # by agency then by document item number
-        x = a.find(i[5])
-        d = a[max(0, (x - 100)): (x + len(i[5]) + 50)]
+        agency = i['agency']
+        doc_num = i['doc_num']
+        doc_score = i['doc_score']
+        doc_name = i['doc_name']
+        filename = i['filename']
+        max_term = i['max_term']
+        doc = doc_contents[agency][doc_num]
+        x = doc.find(max_term)
+        y = len(max_term)
+        d = doc[max(0, (x - 100)): (x + y + 50)]
         excerpt = d[d.find(' '):d.rfind(' ')]
-        j = i + [excerpt]
-        j[4] = i[4].upper()
-        full_r.append(j)
+        excerpt = excerpt.replace('\n', ' ')
+        k = [doc_score, doc_num, doc_name, filename, agency, max_term, excerpt]
+        full_r.append(k)
 
     context = {'search_terms': search_terms,
                 'results': full_r,
@@ -109,50 +115,66 @@ def results(request, sources, search_terms):
 def generate_ngrams(s, n):
     # Convert to lowercases
     s = s.lower()
-
     # Break sentence in the token, remove empty tokens
     tokens = [token for token in s.split(" ") if token != ""]
-
     # Use the zip function to generate n-grams
     # Concatenate the tokens into ngrams and return
     ngrams = zip(*[tokens[i:] for i in range(n)])
     return [" ".join(ngram) for ngram in ngrams]
 
+
+
 def get_results(agency, search_terms):
     print (agency)
-    l = []
-    try_feature = search_terms
-    try:
-        i = feature_names[agency].index(try_feature)
-        x = tfidf_matrix[agency].getcol(i)
-        x = x.todense().tolist()
-        # [search term score / item number / docname / filename / agency]
-        results_list = [
-            [round(pair[1][0], 2), pair[0], doc_names[agency][pair[0]], filenames[agency][pair[0]], agency, try_feature]
-            for pair in zip(range(0, len(x)), x) if pair[1][0] > 0]
-        l = l + results_list
+    df = pd.DataFrame([])
+    # need to include the following info:
+    # [search score / item number / docname / filename / agency / feature_found]
+    df['doc_num'] = range(0, len(doc_names[agency]))
+    df['filename'] = filenames[agency]
+    df['doc_name'] = doc_names[agency]
+    df['agency'] = agency
 
-    except Exception as e:
-        print (f'main search term not found; {try_feature} -- {str(e)}')
-        try_features = generate_ngrams(search_terms, 1)
-        try_features = try_features + generate_ngrams(search_terms, 2)
-        try_features = try_features + generate_ngrams(search_terms, 3)
+    # adding 'AND' functionality
+    bool_search = search_terms.split('AND')
+    print (bool_search)
+    term_cols = []
+    b = [[] for i in bool_search]
+    term_list = []
+    bool_count = 0
+    for q in bool_search:
+        q = q.strip()
+        try_features = generate_ngrams(q, 1)
+        try_features = try_features + generate_ngrams(q, 2)
+        try_features = try_features + generate_ngrams(q, 3)
         print (try_features)
-
         for try_feature in try_features:
             try:
                 i = feature_names[agency].index(try_feature)
                 x = tfidf_matrix[agency].getcol(i)
-                x = x.todense().tolist()
-                # [search term score / item number / docname / filename / agency / feature_found]
-                results_list = [[round(pair[1][0], 2), pair[0], doc_names[agency][pair[0]], filenames[agency][pair[0]], agency, try_feature] for pair in zip(range(0, len(x)), x) if pair[1][0] > 0]
-                l=l+results_list
+                x = x.toarray().flatten()
+                df[try_feature] = x
+                b[bool_count].append(try_feature)
+                term_list.append(try_feature)
             except Exception as e:
-                pass
-    # sort by score
-    r = sorted(l, key=lambda t: t[:][0] * -1)
+                print (str(e))
+        bool_count +=1
 
-    return r
+    # calculate doc_scores based on sum of boolean search sets
+    # for example, 'cryptocurrency custody' should return a letter that has
+    # both those terms, not just a letter that has a strong score for one
+    bool_sums_cols = []
+    for b_count in range(0, bool_count):
+        n = 'sum_of_bool_count_' + str(b_count)
+        df[n] = df[b[b_count]].sum(axis=1)
+        bool_sums_cols.append(n)
+    for b_col in bool_sums_cols:
+        df = df[df[b_col] > 0]
+    # take the naive sum between the booleans.
+    df['doc_score'] = df[bool_sums_cols].sum(axis=1)
+    df['max_term'] = df[term_list].idxmax(axis=1)
+    print (df.sort_values(by='doc_score', ascending = False))
+
+    return df
 
 
 def show_file(request, filename):
@@ -182,4 +204,44 @@ def show_file(request, filename):
 
 
 if __name__ == "__main__":
+    print ('\n\n\n')
     print ('hello')
+    search_terms = 'cryptocurrency custody'
+    sources = 'occfrbfdic'
+
+    if 'occ' in sources:
+        df1 = get_results('occ', search_terms)
+    if 'fdic' in sources:
+        df2 = get_results('fdic', search_terms)
+    if 'frb' in sources:
+        df3 = get_results('frb', search_terms)
+    results_list = pd.concat([df1,df2,df3])
+    r = results_list.sort_values(by='doc_score', ascending=False)
+
+    page_num = 0
+    r = r[(page_num*25):((page_num+1) * 25)]
+    full_r = []
+    for j, i in r.iterrows():
+        # [search term score / doc number / docname / filename / agency / feature_found]
+        agency = i['agency']
+        doc_num = i['doc_num']
+        doc_score = i['doc_score']
+        doc_name = i['doc_name']
+        filename = i['filename']
+        max_term = i['max_term']
+        doc = doc_contents[agency][doc_num]
+        x = doc.find(max_term)
+        y = len(max_term)
+        d = doc[max(0, (x - 100)): (x + y + 50)]
+        excerpt = d[d.find(' '):d.rfind(' ')]
+        excerpt = excerpt.replace('\n', ' ')
+        k = [doc_score, doc_num, doc_name, filename, agency, max_term, excerpt]
+        full_r.append(k)
+
+    #print (full_r)
+    '''
+    context = {'search_terms': search_terms,
+               'results': full_r,
+               'sources': sources}
+    response = render(request, 'reglist/results.html', context)
+    print (f'returning response {sources}')'''
