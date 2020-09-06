@@ -74,13 +74,18 @@ def results(request, sources, search_terms):
         print ('heres a post')
         return redirect(x)
 
+    dflist = []
     if 'occ' in sources:
-        df1 = get_results('occ', search_terms)
+        df = get_results('occ', search_terms)
+        dflist.append(df)
     if 'fdic' in sources:
-        df2 = get_results('fdic', search_terms)
+        df = get_results('fdic', search_terms)
+        dflist.append(df)
     if 'frb' in sources:
-        df3 = get_results('frb', search_terms)
-    results_list = pd.concat([df1,df2,df3])
+        df = get_results('frb', search_terms)
+        dflist.append(df)
+
+    results_list = pd.concat(dflist)
     r = results_list.sort_values(by='doc_score', ascending=False)
 
     page_num = 0
