@@ -88,7 +88,7 @@ def results(request, sources, search_terms):
     full_r = []
     for j, i in r.iterrows():
         # [search term score / doc number / docname / filename / agency / feature_found]
-        agency = i['agency']
+        agency = i['agency'].upper()
         doc_num = i['doc_num']
         doc_score = round(i['doc_score'],2)
         doc_name = i['doc_name']
