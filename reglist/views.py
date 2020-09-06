@@ -90,7 +90,7 @@ def results(request, sources, search_terms):
         # [search term score / doc number / docname / filename / agency / feature_found]
         agency = i['agency']
         doc_num = i['doc_num']
-        doc_score = i['doc_score']
+        doc_score = round(i['doc_score'],2)
         doc_name = i['doc_name']
         filename = i['filename']
         max_term = i['max_term']
