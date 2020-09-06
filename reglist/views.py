@@ -88,7 +88,7 @@ def results(request, sources, search_terms):
     full_r = []
     for j, i in r.iterrows():
         # [search term score / doc number / docname / filename / agency / feature_found]
-        agency = i['agency'].upper()
+        agency = i['agency']
         doc_num = i['doc_num']
         doc_score = round(i['doc_score'],2)
         doc_name = i['doc_name']
@@ -100,7 +100,7 @@ def results(request, sources, search_terms):
         d = doc[max(0, (x - 100)): (x + y + 50)]
         excerpt = d[d.find(' '):d.rfind(' ')]
         excerpt = excerpt.replace('\n', ' ')
-        k = [doc_score, doc_num, doc_name, filename, agency, max_term, excerpt]
+        k = [doc_score, doc_num, doc_name, filename, agency.upper(), max_term, excerpt]
         full_r.append(k)
 
     context = {'search_terms': search_terms,
@@ -235,9 +235,9 @@ if __name__ == "__main__":
         d = doc[max(0, (x - 100)): (x + y + 50)]
         excerpt = d[d.find(' '):d.rfind(' ')]
         excerpt = excerpt.replace('\n', ' ')
-        k = [doc_score, doc_num, doc_name, filename, agency, max_term, excerpt]
+        k = [doc_score, doc_num, doc_name, filename, agency.upper(), max_term, excerpt]
         full_r.append(k)
-
+        print (k)
     #print (full_r)
     '''
     context = {'search_terms': search_terms,
